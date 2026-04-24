@@ -1,0 +1,29 @@
+[
+	{
+		"label": "Build and Run",
+		"shell": {
+			"program": "cmd.exe",
+		},
+		"command": "cd build && ninja && bspviewer.exe",
+		"use_new_terminal": false,
+		"reveal": "always",
+	},
+	{
+		"label": "Build",
+		"shell": {
+			"program": "cmd.exe",
+		},
+		"command": "cd build && ninja",
+		"use_new_terminal": false,
+		"reveal": "always",
+	},
+	{
+		"label": "Run",
+		"shell": {
+			"program": "cmd.exe",
+		},
+		"command": "cd build && bspviewer.exe",
+		"use_new_terminal": false,
+		"reveal": "always",
+	},
+]

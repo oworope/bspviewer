@@ -1,0 +1,4 @@
+{
+	"name": "bspviewer",
+	"dependencies": ["sdl3"]
+}
