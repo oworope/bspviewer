@@ -14,6 +14,11 @@ typedef struct map_t {
 	unsigned int face_count;
 } map_t;
 
+typedef struct Vertex {
+	float x, y, z;
+	unsigned char r, g, b;
+} Vertex;
+
 void drawFaces(map_t* map);
 int readBSP(const char* bspfile, map_t* map);
 void clearMap(map_t* map);

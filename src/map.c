@@ -4,50 +4,6 @@
 #include <map.h>
 #include <SDL3/SDL_opengl.h>
 
-void drawFaces(map_t* map) {
-	glBegin(GL_TRIANGLES);
-	for (unsigned int i = 0; i < map->face_count; i++) {
-		dface_t* f = &map->faces[i];
-		dplane_t* p = &map->planes[f->planenum];
-
-		float brightness = 0.3f + fabsf(p->normal.z) * 0.4f + fabsf(p->normal.x) * 0.2f;
-		glColor3f(brightness * 0.6f, brightness * 0.2f, brightness * 0.1f);
-
-		// Allocate enough space for the face's vertex indices
-		unsigned short* face_v_indices = (unsigned short*)malloc(f->numedges * sizeof(unsigned short));
-		if (!face_v_indices) continue;   // skip face on allocation failure
-
-		// Build the ordered vertex list from the surfedges
-		for (int j = 0; j < f->numedges; j++) {
-			int e_idx = map->surfedges[f->firstedge + j];
-			face_v_indices[j] = (e_idx >= 0) ? map->edges[e_idx].v[0] : map->edges[-e_idx].v[1];
-		}
-
-		// Fan triangulation (always using vertex 0 as the fan centre)
-		for (int j = 1; j < f->numedges - 1; j++) {
-			unsigned short v0 = face_v_indices[0];
-			unsigned short v1 = face_v_indices[j];
-			unsigned short v2 = face_v_indices[j + 1];
-
-			// Reverse winding for faces that are opposite to the plane normal
-			// if (f->side != 0) {
-				// swap v1 and v2 to invert the triangle
-				// ALWAYS swap v1 and v2 to convert from clockwise (BSP) to CCW (OpenGL)
-				unsigned short tmp = v1;
-				v1 = v2;
-				v2 = tmp;
-			// }
-
-			glVertex3f(map->vertices[v0].x, map->vertices[v0].z, -map->vertices[v0].y);
-			glVertex3f(map->vertices[v1].x, map->vertices[v1].z, -map->vertices[v1].y);
-			glVertex3f(map->vertices[v2].x, map->vertices[v2].z, -map->vertices[v2].y);
-		}
-
-		free(face_v_indices);
-	}
-	glEnd();
-}
-
 int readBSP(const char* bspfile, map_t* map) {
 	FILE* f = fopen(bspfile, "rb");
 	if (f == NULL) {

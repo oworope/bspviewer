@@ -1,4 +1,4 @@
 {
 	"name": "bspviewer",
-	"dependencies": ["sdl3"]
+	"dependencies": ["sdl3", "angle"]
 }
