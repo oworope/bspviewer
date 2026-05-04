@@ -1,7 +1,9 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <vpk.h>
+#include <resource.h>
 
 #ifdef _WIN32 // fix _strdup warning
 #define strdup _strdup
@@ -70,7 +72,11 @@ int readVPK(const char* filepath) {
 					fseek(f, entry.PreloadBytes, SEEK_CUR);
 				}
 
-				printf("%s: Found: %s/%s.%s\n", filepath, path, name, ext);
+				char full_path[512];
+				sprintf(full_path, "%s/%s.%s", path, name, ext);
+
+				printf("%s: Found: %s\n", filepath, full_path);
+
 				free(name);
 			}
 			free(path);

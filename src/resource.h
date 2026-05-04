@@ -7,3 +7,6 @@ typedef struct TextureFileResource {
 	uint32_t entry_offset;
 	uint32_t entry_length;
 } TextureFileResource;
+
+TextureFileResource* g_texture_registry = NULL;
+int g_texture_count = 0;

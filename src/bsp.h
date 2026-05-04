@@ -7,6 +7,10 @@ typedef struct Vector { float x, y, z; } Vector;
 #define MAX_MAP_EDGES 256000
 #define MAX_MAP_SURFEDGES 256000
 #define MAX_MAP_FACES 65536
+#define MAX_MAP_TEXINFO 12288
+#define MAX_MAP_TEXDATA 2048
+#define MAX_MAP_TEXDATA_STRING_DATA 256000
+#define TEXTURE_NAME_LENGTH 128
 
 typedef struct dplane_t {
 	Vector  normal;   // normal vector
@@ -34,6 +38,8 @@ typedef enum LumpType {
 	LUMP_SURFEDGES = 13,
 	LUMP_MODELS = 14,
 	LUMP_WORLDLIGHTS = 15,
+	LUMP_TEXDATA_STRING_DATA = 43,
+	LUMP_TEXDATA_STRING_TABLE = 44,
 	// TODO: add more lump types
 	// https://developer.valvesoftware.com/wiki/BSP_(Source)#Lump_types
 } LumpType;
@@ -80,3 +86,19 @@ typedef struct dface_t
 	unsigned short  firstPrimID;
 	unsigned int    smoothingGroups;        // lightmap smoothing group
 } dface_t;
+
+typedef struct texinfo_t
+{
+	float   textureVecs[2][4];    // [s/t][xyz offset]
+	float   lightmapVecs[2][4];   // [s/t][xyz offset] - length is in units of texels/area
+	int     flags;                // miptex flags overrides
+	int     texdata;              // Pointer to texture name, size, etc.
+} texinfo_t;
+
+typedef struct dtexdata_t
+{
+	Vector  reflectivity;            // RGB reflectivity
+	int     nameStringTableID;       // index into TexdataStringTable
+	int     width, height;           // source image
+	int     view_width, view_height;
+} dtexdata_t;
