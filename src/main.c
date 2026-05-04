@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNIGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <cglm/call.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
