@@ -10,6 +10,7 @@ typedef struct map_t {
 	texinfo_t* texinfos;
 	dtexdata_t* texdatas;
 	int* texdata_string_table;
+	dmodel_t* bmodels;
 	unsigned int plane_count;
 	unsigned int vertex_count;
 	unsigned int edge_count;
@@ -18,6 +19,7 @@ typedef struct map_t {
 	unsigned int texinfo_count;
 	unsigned int texdata_count;
 	unsigned int texdata_string_table_count;
+	unsigned int bmodel_count;
 } Map;
 
 typedef struct Vertex {

@@ -11,6 +11,7 @@ typedef struct Vector { float x, y, z; } Vector;
 #define MAX_MAP_TEXDATA 2048
 #define MAX_MAP_TEXDATA_STRING_DATA 256000
 #define TEXTURE_NAME_LENGTH 128
+#define MAX_MAP_MODELS 1024
 
 typedef struct dplane_t {
 	Vector  normal;   // normal vector
@@ -102,3 +103,11 @@ typedef struct dtexdata_t
 	int     width, height;           // source image
 	int     view_width, view_height;
 } dtexdata_t;
+
+typedef struct dmodel_t
+{
+	Vector  mins, maxs;            // bounding box
+	Vector  origin;                // for sounds or lights
+	int     headnode;              // index into node array
+	int     firstface, numfaces;   // index into face array
+} dmodel_t;

@@ -72,11 +72,15 @@ int main(int argc, char* argv[]) {
 		SDL_Quit();
 	}
 
-	Model* map_model = create_map_model(renderer, map);
+	int model_count = 0;
+	Model** models = create_brush_models(renderer, &map, &model_count);
 
 	bool running = true;
+	const bool* keystate = NULL;
 	while (running) {
 		SDL_Event e;
+		float dx = 0.0f;
+		float dy = 0.0f;
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_EVENT_QUIT) {
 				running = false;
@@ -87,49 +91,35 @@ int main(int argc, char* argv[]) {
 				renderer_viewport(renderer, 0, 0, window_width, window_height);
 			}
 
-			const bool *state = SDL_GetKeyboardState(NULL);
-
-			glmc_vec3_zero(camera.speed);
-			camera.move_speed = 10.0f;
-
-			if (state[SDL_SCANCODE_LSHIFT]) camera.move_speed *= 5.0f;
-			if (state[SDL_SCANCODE_W]) camera.speed[2] -= camera.move_speed;
-			if (state[SDL_SCANCODE_S]) camera.speed[2] += camera.move_speed;
-			if (state[SDL_SCANCODE_A]) camera.speed[0] -= camera.move_speed;
-			if (state[SDL_SCANCODE_D]) camera.speed[0] += camera.move_speed;
-
 			if (e.type == SDL_EVENT_MOUSE_MOTION) {
-				float sensitivity = 0.002f;
-    			float dx = e.motion.xrel * sensitivity;
-    			float dy = e.motion.yrel * sensitivity;
-
-    			versor qx;
-    			glmc_quat(qx, -dx, 0, 1, 0);
-    			glmc_quat_mul(qx, camera.rot, camera.rot);
-
-    			versor qy;
-    			glmc_quat(qy, -dy, 1, 0, 0);
-    			glmc_quat_mul(camera.rot, qy, camera.rot);
-
-       			glmc_quat_normalize(camera.rot);
+				dx += e.motion.xrel;
+				dy += e.motion.yrel;
 			}
 		}
 
-		vec3 worldMove;
-		glmc_quat_rotatev(camera.rot, camera.speed, worldMove);
-		glmc_vec3_add(camera.pos, worldMove, camera.pos);
+		keystate = SDL_GetKeyboardState(NULL);
+		camera_update(&camera, keystate, 0.016f); // TODO: dt
+		camera_rotate(&camera, dx, dy, 0.0);
 
 		mat4 view, proj;
 		camera_get_view_matrix(&camera, view);
 		camera_get_projection_matrix((float)window_width / (float)window_height, proj);
 
 		renderer_begin_frame(renderer);
-		model_render(map_model, view, proj);
+		for (int i = 0; i < model_count; i++) {
+			model_render(models[i], view, proj);
+		}
 		renderer_end_frame(renderer);
 		SDL_Delay(16);
 	}
 
-	destroy_model(map_model);
+	if (models) {
+		for (int i = 0; i < model_count; i++) {
+			destroy_model(models[i]);
+		}
+		free(models);
+	}
+
 	clearMap(&map);
 	destroy_renderer(renderer);
 	SDL_DestroyWindow(window);

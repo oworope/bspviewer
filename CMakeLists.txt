@@ -24,6 +24,10 @@ add_executable(${PROJECT_NAME}
     src/main.c
     src/vpk.c
     src/map.c
+    src/hashtable.c
+    src/resource.c
+    src/renderer.c
+    src/camera.c
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -40,6 +44,9 @@ endif()
 
 find_package(SDL3 REQUIRED)
 find_package(OpenGL REQUIRED)
+if(WIN32)
+find_package(unofficial-angle CONFIG REQUIRED)
+endif()
 find_library(MATH_LIBRARY m)
 if(MATH_LIBRARY)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${MATH_LIBRARY})
@@ -52,7 +59,11 @@ option(CGLM_USE_TEST "Enable Tests" OFF) # for make check - make test
 add_subdirectory(external/cglm/)
 
 target_include_directories(${PROJECT_NAME} PUBLIC src)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3 OpenGL::GL cglm)
+if (WIN32)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3 unofficial::angle::libGLESv2 unofficial::angle::libEGL cglm)
+else()
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3 OpenGL::GLES2 cglm)
+endif()
 
 if(DEFINED VITA)
 vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME})

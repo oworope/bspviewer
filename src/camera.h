@@ -15,3 +15,6 @@ void camera_get_view_matrix(const Camera* cam, mat4 dest);
 
 // Fill a 4x4 perspective projection matrix (aspect = width/height)
 void camera_get_projection_matrix(float aspect, mat4 dest);
+
+void camera_rotate(Camera* cam, float xrel, float yrel, float dt);
+void camera_update(Camera* cam, const bool* keystate, float dt);

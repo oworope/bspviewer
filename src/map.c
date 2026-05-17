@@ -153,7 +153,7 @@ int readBSP(const char* bspfile, Map* map) {
 
 	printf("texdata_count: %d, size: %llu kB\n", map->texdata_count, map->texdata_count * sizeof(dtexdata_t) / 1024);
 
-	printf("\nReading textures...\n\n");
+	printf("\nReading textures...\n");
 
 	map->texdata_string_table = NULL;
 	map->texdata_string_table_count = 0;
@@ -195,11 +195,34 @@ int readBSP(const char* bspfile, Map* map) {
 
 	free(all_strings);
 
+	map->bmodels = NULL;
+	map->bmodel_count = 0;
+	if (fseek(f, header.lumps[LUMP_MODELS].fileofs, SEEK_SET) == 0) {
+		map->bmodel_count = header.lumps[LUMP_MODELS].filelen / sizeof(dmodel_t);
+		map->bmodels = (dmodel_t*)calloc(map->bmodel_count, sizeof(dmodel_t));
+		fread(map->bmodels, sizeof(dmodel_t), map->bmodel_count, f);
+	} else {
+		fprintf(stderr, "Failed to read bmodel (model) lump: %s:%d\n", __FILE__, __LINE__);
+		free(map->texdata_string_table);
+		free(map->texdatas);
+		free(map->texinfos);
+		free(map->faces);
+		free(map->surfedges);
+		free(map->edges);
+		free(map->vertices);
+		free(map->planes);
+		fclose(f);
+		return -1;
+	}
+
+	printf("bmodel_count: %d, size: %llu kB\n", map->bmodel_count, map->bmodel_count * sizeof(dmodel_t) / 1024);
+
 	fclose(f);
 	return 0;
 }
 
 void clearMap(Map* map) {
+	free(map->bmodels);
 	free(map->texdata_string_table);
 	free(map->texdatas);
 	free(map->texinfos);

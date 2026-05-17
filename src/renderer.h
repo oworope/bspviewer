@@ -16,5 +16,6 @@ void destroy_shader(Shader* s);
 
 typedef struct model_t Model;
 Model* create_map_model(Renderer* r, Map map);
+Model** create_brush_models(Renderer* r, const Map* map, int* count);
 void destroy_model(Model* m);
 void model_render(Model* m, mat4 view, mat4 proj);
